@@ -16,9 +16,9 @@ const config = {
 
 function sendEmail(username, key, email, type) {
     if (type == "registration") {
-        var text = '<h1>Welcome to Matcha!</h1>' + '<p>Please click the following link to activate your account: </p>' + '<a href="http://localhost:5000/users/activate?username=' + username + '&key=' + key + '">ACTIVATE</a>';
+        var text = '<h1>Welcome to Matcha!</h1>' + '<p>Please click the following link to activate your account: </p>' + '<a href="https://codename007.herokuapp.com/users/activate?username=' + username + '&key=' + key + '">ACTIVATE</a>';
     } else {
-        var text = '<h1>Reset your Matcha password!</h1>' + '<p>Please click the following link to reset your password: </p>' + '<a href="http://localhost:5000/users/reset?username=' + username + '&key=' + key + '">RESET</a>';
+        var text = '<h1>Reset your Matcha password!</h1>' + '<p>Please click the following link to reset your password: </p>' + '<a href="https://codename007.herokuapp.com/users/reset?username=' + username + '&key=' + key + '">RESET</a>';
     }
         var flag = 1;
 
