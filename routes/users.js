@@ -5,6 +5,15 @@ const passport = require('passport');
 const nodemailer = require('nodemailer');
 const uniqid = require('uniqid');
 
+const config = {
+    host: "smtp.mailtrap.io",
+    port: 25,
+    auth:{
+        user: "a90f9967334f26",
+        pass: "d99ca9b857a5a4"
+    }, 
+};
+
 function sendEmail(username, key, email, type) {
     if (type == "registration") {
         var text = '<h1>Welcome to Matcha!</h1>' + '<p>Please click the following link to activate your account: </p>' + '<a href="http://localhost:5000/users/activate?username=' + username + '&key=' + key + '">ACTIVATE</a>';
@@ -13,17 +22,19 @@ function sendEmail(username, key, email, type) {
     }
         var flag = 1;
 
-    transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'camagrusocial@gmail.com',
-            pass: '!Camagru1793'
-        }
-    });
+    transporter = nodemailer.createTransport(config
+    //     {
+    //     service: 'gmail',
+    //     auth: {
+    //         user: 'camagrusocial@gmail.com',
+    //         pass: '!Camagru1793'
+    //     }
+    // }
+    );
     mailOptions = {
-        from: '"Matcha" <infosmatcha@gmail.com>',
+        from: '"CodeName 007 - Master Splinter" <Codename007@gmail.com>',
         to: email,
-        subject: 'Activate your Matcha account!',
+        subject: 'Activate your 007 account!',
         text: text,
         html: '<p>' + text + '</p>'
     };
