@@ -1,0 +1,176 @@
+<%- include('./includes/header') %>
+<%- include('./partials/messages') %>
+<% function getAge(dateString) { %>
+    <% var today = new Date(); %>
+    <% var birthDate = new Date(dateString); %>
+    <% var age = today.getFullYear() - birthDate.getFullYear(); %>
+    <% var m = today.getMonth() - birthDate.getMonth(); %>
+    <% if (m < 0 || (m===0 && today.getDate() < birthDate.getDate())) { age--; } %>
+    <% return age; %>
+<% } %>
+<% function calcRating(x) { %>
+    <% return (1 / (1 + Math.exp(-(0.01 * x))) * 100); %>
+<% } %>
+<% function getDistance(lat1, lon1, lat2, lon2) { %>
+    <% var R = 6371; %>
+    <% var dLat = deg2rad(lat2 - lat1); %>
+    <% var dLon = deg2rad(lon2 - lon1); %>
+    <% var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2); %>
+    <% var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); %>
+    <% var d = R * c; %>
+    <% return d; %>
+<% } %>
+
+<% function deg2rad(deg) { %>
+    <% return deg * (Math.PI / 180) %>
+<% } %>
+<div id="here"></div>
+<h1 class="mt-4 explore">Explore</h1>
+<p class="lead mb-3">Welcome back, <b><%= user.fname %></b>!</p>
+<br>
+<div class="row">
+    <div class="column-explore3">
+        <div class="card border-primary mb-3">
+            <div class="card-header"><h4>Age preference</h4></div>
+            <div class="card-body">
+                <form action="/age" method="POST">
+                    <div class="form-group">
+                        <label for="age-min">Minimum age</label>
+                        <div class="slidecontainer">
+                            <input name="agemin" type="range" min="18" max="65" value="<%= typeof user.agemin != 'undefined' ? user.agemin : age - 6 %>" class="slider" id="myRange">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="age-max">Maximum age</label>
+                        <div class="slidecontainer">
+                            <input name="agemax" type="range" min="18" max="65" value="<%= typeof user.agemax != 'undefined' ? user.agemax : age + 6 %>" class="slider" id="myRange">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary save-age">
+                        Save
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="column-explore3">
+        <div class="card border-primary mb-3">
+            <div class="card-header">
+                <h4>Fame rating</h4>
+            </div>
+            <div class="card-body">
+                <form action="/rating" method="POST">
+                    <div class="form-group">
+                        <label for="fame-min">Minimum rating</label>
+                        <div class="slidecontainer">
+                            <input name="famemin" type="range" min="0" max="100"
+                                value="<%= typeof user.famemin != 'undefined' ? user.famemin : 0 %>" class="slider"
+                                id="myRange" step="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="fame-max">Maximum rating</label>
+                        <div class="slidecontainer">
+                            <input name="famemax" type="range" min="0" max="100"
+                                value="<%= typeof user.famemax != 'undefined' ? user.famemax : 100 %>" class="slider"
+                                id="myRange" step="1">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary save-age">
+                        Save
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="column-explore3">
+        <div class="card border-primary mb-3">
+            <div class="card-header">
+                <h4>Distance</h4>
+            </div>
+            <div class="card-body">
+                <form action="/distance" method="POST">
+                    <div class="form-group">
+                        <label for="distance-min">Minimum distance (km)</label>
+                        <div class="slidecontainer">
+                            <input name="distancemin" type="range" min="0" max="200"
+                                value="<%= typeof user.mindistance != 'undefined' ? user.mindistance : 0 %>" class="slider"
+                                id="myRange" step="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="distance-max">Maximum distance (km)</label>
+                        <div class="slidecontainer">
+                            <input name="distancemax" type="range" min="0" max="200"
+                                value="<%= typeof user.maxdistance != 'undefined' ? user.maxdistance : 200 %>" class="slider"
+                                id="myRange" step="1">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary save-age">
+                        Save
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<p id="user" style="visibility: hidden"><%= user.username %></p>
+<% if (profiles != undefined && profiles.length > 0) { %>
+    <h3>Check out these people that are close to you!</h3>
+    <br>
+    <% profiles.forEach(profile => { %>
+        <% let distance = getDistance(user.location.coordinates[1], user.location.coordinates[0], profile.location.coordinates[1], profile.location.coordinates[0]); %>
+        <% if ((getAge(profile.dob) >= user.agemin && getAge(profile.dob) <= user.agemax) && (calcRating(profile.rating) >= user.famemin && calcRating(profile.rating) <= user.famemax) && (distance <= user.maxdistance && distance >= user.mindistance)) { %>
+            <div class="jumbotron" style="padding: 15px 25px 0px 25px;">
+                <div class="row">
+                    <a class="profile-link" href="/profile?user=<%= profile.username %>&page=1">
+                        <div class="column-explore1">
+                            <img class="images-explore" src="<%= '/uploads/' + profile.p1 %>" onerror="this.onerror=null; this.src='/img/image-not-available.jpg'">
+                        </div>
+                    </a> 
+                    <div class="column-explore2">
+                        <div class="card border-dark mb-3">
+                            <div class="card-header" style="font-size: 20px; font-weight: bold;"><%= profile.fname + ' ' + profile.lname + ', ' + getAge(profile.dob)%></div>
+                            <div class="card-body">
+                                <h5 class="card-text"><%= profile.bio %></h5>
+                                <p class="card-text">#<%= profile.tags.join(' #') %></p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/action/dislike?user=<%= profile.username %>" ><i class="fas fa-times dislike"></i></a>
+                    <a href="/action/like?user=<%= profile.username %>" onclick="like()"><i class="fas fa-heart like"></i></a>
+                </div>
+            </div>
+            <p id="liked" style="visibility: hidden;"><%= profile.username %></p>
+        <% } %>
+    <% }) %>
+<% } else { %>
+    <h3>There's no one new to show you...</h3>
+    <br>
+<% } %>
+<script>
+    var username = document.querySelector("#user").innerHTML;
+    var likedVar = document.querySelector("#liked");
+    if (likedVar != null) {
+        var liked = likedVar.innerHTML;
+    }
+    var match = window.location.search.slice(7);
+    console.log(match);
+    if (match != '') {
+        socket.emit('match', username, match);
+    }
+    socket.emit('login', username);
+
+    function like() {
+        console.log("test");
+        socket.emit('like', username, liked);
+    }
+
+    socket.on('notif', (notif, user, user2) => {
+        $("#here").append(
+        '<div class="alert alert-dismissible alert-primary" style="font-size: 15px;" role="alert">' + notif +
+        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+        '<span aria-hidden="true">&times;</span>' +
+        '</button></div >');
+    });
+</script>

@@ -1,0 +1,251 @@
+<%- include('./includes/header') %>
+<% function calcRating(x) { %>
+<% return (1 / (1 + Math.exp(-(0.01 * x))) * 100); %>
+<% } %>
+<% function GetFormattedDate(date) { %>
+<% var now = new Date(); %>
+<% var month = date.getMonth(); %>
+<% var day = date.getDate(); %>
+<% var hour = date.getHours(); %>
+<% var mins = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes(); %>
+<% if (now .getDate() == day && now .getMonth() == month) { %>
+<% return "Today at " + hour + ":" + mins; %>
+<% } else { %>
+<% return day + "/" + month + " " + hour + ":" + mins; %>
+<% } %>
+<% } %>
+<div id="here"></div>
+<div class="row mt-5">
+    <div class="col-md-10 m-auto">
+        <div class="card card-body jumbotron">
+            <h1 class="text-center mb-5">
+                <i class="fas fa-user">
+                    <% if (user.online == true) { %>
+                    <div class="online-profile"></div>
+                    <% } %>
+                </i> <%= user.fname + ', ' + age %>
+                <div class="stars-outer">
+                    <div class="stars-inner"></div>
+                </div>
+                <p hidden class="card-text rating"><%= calcRating(user.rating) %></p>
+            </h1>
+            <%- include('./partials/messages') %>
+            <div class="row">
+                <div class="column">
+                    <div class="image-btn-cont">
+                        <% if (flag != 1) { %>
+                        <a href="/photos/upload_photos?edit=1" title="Edit your pictures"><i
+                                class="fas fa-pen-square pen-photo"></i></a>
+                        <% } %>
+                        <% let pages = [user.p1, user.p2, user.p3, user.p4, user.p5]; %>
+                        <% let j = user.amount; %>
+                        <% if (pages[page - 1] != '') { %>
+                        <% let photo = pages[page - 1]; %>
+                        <img src="/uploads/<%= photo %>" id="pimg" class="<%= (j == 1) ? 'rounded' : ''%>"
+                            onerror="this.onerror=null; this.src='/img/image-not-available.jpg'" style="width:100%">
+                        <% } %>
+                    </div>
+                    <h3>
+                        <% if (j > 1) { %>
+                        <div class="container-page">
+                            <% for (i = 1; i <= j; i++) { %>
+                            <a href="<%= flag == 1 ? '?user=' + user.username + '&page=' + i : '?page=' + i %>"
+                                class="index-page <%= page == i ? 'active-page' : ''%>"><%= i %></a>
+                            <% } %>
+                        </div>
+                        <% } %>
+                    </h3>
+                    <% if (flag != 1) { %>
+                    <% if (page != 1) { %>
+                    <div class="button-cont">
+                        <button onclick="remove()" class="remove"><i class="fas fa-minus-circle"></i> Remove this
+                            picture</button>
+                    </div>
+                    <% } %>
+                    <% } else { %>
+                    <% if (viewer.matches.includes(user.username)) { %>
+                    <button onclick="unmatch()" class="remove unmatch" title="Unmatch this user"><i
+                            class="fas fa-user-slash"></i></button>
+                    <% } %>
+                    <button onclick="report()" class="remove report" title="Report this user"><i
+                            class="fas fa-flag"></i></button>
+                    <% } %>
+                </div>
+                <div class="column">
+                    <div class="card border-light mb-3">
+                        <div class="image-btn-cont"></div>
+                        <% if (flag != 1) { %>
+                        <a href="/profile/edit" title="Edit your info"><i class="fas fa-pen-square pen-info"></i></a>
+                        <% } %>
+                        <div class="card-header">Personal Info</div>
+                        <div class="card-body form-body">
+                            <h5 class="card-title">Last name</h5>
+                            <p class="card-text"><%= user.lname %></p>
+                            <h5 class="card-title">Username</h5>
+                            <p id="name" class="card-text"><%= user.username %></p>
+                            <h5 class="card-title">Bio</h5>
+                            <p class="card-text"><%= user.bio %></p>
+                            <h5 class="card-title">Gender</h5>
+                            <p class="card-text"><%= user.gender %></p>
+                            <h5 class="card-title">Orientation</h5>
+                            <p class="card-text"><%= user.orientation %></p>
+                            <h5 class="card-title">Tags</h5>
+                            <p class="card-text">#<%= user.tags.join(' #') %></p>
+                            <% if (user.online == false) { %>
+                            <h5 class="card-title last-online-profile">Last Online</h5>
+                            <p class="card-text last-online-profile"><%= GetFormattedDate(user.lastOnline) %></p>
+                            <% } %>
+                                <h5 class="card-title">Location</h5>
+                                <div id="maps" style="width: auto;height: 300px;"></div>
+                                <input id="lat" type="number" step="any" value="<%= user.location.coordinates[1] %>"
+                                    style="display: none;">
+                                <input id="lng" type="number" step="any" value="<%= user.location.coordinates[0] %>"
+                                    style="display: none;">
+                        </div>
+                    </div>
+                    <% if (flag != 1) { %>
+                    <p class="lead mt-4">
+                        <a href="/users/reset">Change Your Password</a>
+                    </p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p id="showLoc" style="visibility: hidden;">user.showLoc</p>
+</div>
+</div>
+<p id="viewer" style="visibility: hidden;"><%= typeof viewer != 'undefined' ? viewer.username : user.username%></p>
+<script>
+    function GetFormattedDate(date) {
+        var now = new Date();
+        var month = now.getMonth();
+        var day = now.getDate();
+        var hour = now.getHours();
+        var mins = now.getMinutes();
+        if (now.getDate() == day && now.getMonth() == month) {
+            return "Today at " + hour + ":" + mins;
+        } else {
+            return day + "/" + month + " " + hour + ":" + mins;
+        }
+    }
+
+    function isMobileDevice() {
+        return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+    }
+
+    function remove() {
+        if (!confirm("Do you want to remove this picture?")) {
+            return
+        }
+        page = window.location.href[window.location.href.length - 1];
+        if (isMobileDevice() == true) {
+            fetch('https://api.ipify.org/?format=json')
+                .then(results => results.json())
+                .then(data => window.location = 'http://84.198.113.229:5000/photos/remove?photo=' + page)
+        } else {
+            window.location = 'http://localhost:5000/photos/remove?photo=' + page;
+        }
+    }
+
+    function unmatch() {
+        if (!confirm("Are you sure you want to unmatch this person? You won't be able to interact with them in any way!")) {
+            return
+        }
+        window.location = 'http://localhost:5000/action/unmatch?user=' + viewer + '&unmatched=' + user;
+        socket.emit('unmatch', viewer, user);
+    }
+
+    function report() {
+        if (!confirm("Report this user as a fake account?")) {
+            return
+        }
+        window.location = 'http://localhost:5000/action/report?user=' + viewer + '&reported=' + user;
+    }
+
+    let rating = document.querySelector(".rating").innerHTML;
+    document.querySelector(".stars-inner").style.width = rating + '%';
+
+    var user = document.querySelector("#name").innerHTML;
+    var viewer = document.querySelector("#viewer").innerHTML;
+    var showLoc = document.querySelector("#showLoc").innerHTML;
+    socket.emit('login', viewer);
+
+    if (viewer != '') {
+        socket.emit('viewed', viewer, user);
+    }
+
+    socket.on('online', (username) => {
+        $('.fa-user').append('<div class="online-profile"></div>');
+        $(".last-online-profile").remove();
+    });
+
+    socket.on('offline', () => {
+        $(".online-profile").remove();
+        $('.form-body').append('<h5 class="card-title last-online-profile">Last Online</h5>' +
+            '<p class= "card-text last-online-profile" >' + GetFormattedDate(Date.now()) + '</p >');
+    });
+
+    socket.on('notif', (notif, user, user2) => {
+        if (user != user2) {
+            $("#here").append(
+                '<div class="alert alert-dismissible alert-primary" style="font-size: 15px;" role="alert">' + notif +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button></div >');
+        }
+    });
+
+    function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                console.log("Geolocation is not supported by this browser.");
+            }
+    }
+    function showPosition(position) {
+        var dblat = parseFloat(document.getElementById("lat").value);
+        var dblng = parseFloat(document.getElementById("lng").value);
+        console.log(dblat);
+        console.log(dblng);
+        if (!dblat || !dblng) {
+            console.log("rentre dans if");
+            var coords = { lat: position.coords.latitude, lng: position.coords.longitude };
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            var map = new google.maps.Map(document.getElementById("maps"), {
+                center: coords,
+                zoom: 13,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControlOptions: {
+                    mapTypeIds: ['moon']
+                }
+            })
+        } else {
+            var map = new google.maps.Map(document.getElementById("maps"), {
+                center: {
+                    lat: dblat,
+                    lng: dblng
+                },
+                zoom: 13,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControlOptions: {
+                    mapTypeIds: ['moon']
+                }
+            })
+            // var myLatLng = {dblat, dblng};
+            marker = new google.maps.Marker({
+                position: {
+                    lat: dblat,
+                    lng: dblng
+                },
+                map: map
+            });
+            infowindow.open(map, marker);
+        }
+    }
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPAUzkA6ky2ZJH3YIHiskth8z3RaKbZwU&callback=getLocation"
+    async defer>
+    </script>

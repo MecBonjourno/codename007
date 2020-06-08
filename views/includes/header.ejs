@@ -1,0 +1,31 @@
+<nav class="navbar navbar-expand-lg header navbar-light">
+    <a class="navbar-brand" style="color: #EB6864;" href="/dashboard"><i class="fas fa-heartbeat"></i></a>
+
+    <button class="navbar-toggler toggler" type="button" data-toggle="collapse" data-target="#navbarColor03"
+        aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation" style="color: #EB6864;">
+        <span class="navbar-toggler-icon" style="color: #EB6864;"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor03">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" style="color: #EB6864;" href="/dashboard">Explore</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" style="color: #EB6864;" href="/profile?page=1">Profile</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" style="color: #EB6864;" href="/matches">Matches</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" style="color: #EB6864;" href="/notif">Notifications</a>
+            </li>
+        </ul>
+        <a href="/users/logout">
+            <button type="button" class="btn btn-outline-primary">Logout</button>
+        </a>
+    </div>
+</nav>
+<script>
+    var socket = io();
+</script>

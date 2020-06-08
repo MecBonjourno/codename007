@@ -1,0 +1,37 @@
+<%- include('./includes/header') %>
+<div id="here"></div>
+<%- include('./partials/messages') %>
+<h1 class="mt-4 explore">Matches</h1>
+<% if (profiles != undefined && profiles.length > 0) { %>
+    <h3>Check out the people you matched with!</h3>
+    <br>
+    <% profiles.forEach(profile => { %>
+        <div class="responsive">
+            <div class="gallery">
+                <a href="/profile?user=<%= profile.username %>&page=1">
+                    <div class="column-explore1">
+                        <img src="/uploads/<%= profile.p1 %>" onerror="this.onerror=null; this.src='/img/image-not-available.jpg'" class="images-explore">
+                    </div>
+                </a>
+                <div class="desc"><h4><%= profile.fname %></h4></div>
+            </div>
+            <a href="/matches/chat?me=<%= user.username %>&user=<%=profile.username%>"><i class="fas fa-envelope icon-message"></i></a>
+        </div>
+    <% }) %>
+<% } else { %>
+    <h3>No matches yet...</h3>
+    <br>
+<% } %>
+<p id="username" style="visibility: hidden"><%= user.username %></p>
+<script>
+    var user = document.querySelector("#username").innerHTML;
+    socket.emit('login', user);
+
+    socket.on('notif', (notif, user, recipient) => {
+            $("#here").append(
+                '<div class="alert alert-dismissible alert-primary" style="font-size: 15px; margin-bottom: 20px;" role="alert">' + notif +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button></div >');
+        });
+</script>

@@ -1,0 +1,114 @@
+<%- include('./includes/header') %>
+<% if (user.completedPics == 1) { %>
+    <%- include('./includes/header') %> 
+<% } %>
+<div id="here"></div>
+<div class="row mt-5">
+    <div class="col-md-6 m-auto">
+        <div class="card card-body jumbotron">
+            <h1 class="text-center mb-5">
+                <i class="fas fa-images"></i> Upload Pictures
+            </h1>
+            <%- include('./partials/messages') %>
+            <div class="row-pics">
+                <div class="column-pics">
+                    <div class="image-cropper">
+                        <img src="<%= user.p1 != '' ? '/uploads/' + user.p1 : '/img/image-not-available.jpg' %>" onerror="this.onerror=null; this.src='/img/image-not-available.jpg'" class="images" id="p1" style="width:100%">
+                    </div>
+                </div>
+                <div class="column-pics">
+                    <div class="image-cropper">
+                        <img src="<%= user.p2 != '' ? '/uploads/' + user.p2 : '/img/image-not-available.jpg' %>" onerror="this.onerror=null; this.src='/img/image-not-available.jpg'" class="images" id="p2" style="width:100%">
+                    </div>
+                </div>
+                <div class="column-pics">
+                    <div class="image-cropper">
+                        <img src="<%= user.p3 != '' ? '/uploads/' + user.p3 : '/img/image-not-available.jpg' %>" onerror="this.onerror=null; this.src='/img/image-not-available.jpg'" class="images" id="p3" style="width:100%">
+                    </div>
+                </div>
+                <div class="column-pics">
+                    <div class="image-cropper">
+                        <img src="<%= user.p4 != '' ? '/uploads/' + user.p4 : '/img/image-not-available.jpg' %>" onerror="this.onerror=null; this.src='/img/image-not-available.jpg'" class="images" id="p4" style="width:100%">
+                    </div>
+                </div>
+                <div class="column-pics">
+                    <div class="image-cropper">
+                        <img src="<%= user.p5 != '' ? '/uploads/' + user.p5 : '/img/image-not-available.jpg' %>" onerror="this.onerror=null; this.src='/img/image-not-available.jpg'" class="images" id="p5" style="width:100%">
+                    </div>
+                </div>
+            </div>
+        </br>
+            <form action="/photos/upload_photos" method="POST" enctype="multipart/form-data">
+                <h2>Profile Picture</h2>
+                <div class="form-group">
+                    <label for="file" /></label>
+                    <input name="p1" type="file" id="input1" class="form-control-file file-input">
+                </div>
+                <h2>Additional pictures (optional)</h2>
+                <div class="form-group">
+                    <label for="file" /></label>
+                    <input name="p2" type="file" id="input2" class="form-control-file file-input">
+                </div>
+                <div class="form-group">
+                    <label for="file" /></label>
+                    <input name="p3" type="file" id="input3" class="form-control-file file-input">
+                </div>
+                <div class="form-group">
+                    <label for="file" /></label>
+                    <input name="p4" type="file" id="input4" class="form-control-file file-input">
+                </div>
+                <div class="form-group">
+                    <label for="file" /></label>
+                    <input name="p5" type="file" id="input5" class="form-control-file file-input">
+                </div>
+                <% if (typeof edit != 'undefined') { %>
+                    <input type="hidden" name="edit" id="" value="1">
+                <% } %>
+                <button type="submit" class="btn btn-primary btn-block save">
+                    Save
+                </button>
+            </form>
+        </div>
+    </div>
+    <p id="username" style="visibility: hidden"><%= user.username %></p>
+    <p id="flag" style="visibility: hidden"><%= user.completedPics %></p>
+</div>
+<script>
+    function readURL(input, tag) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $(tag).attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+            }
+        }
+        $("#input1").change(function () {
+            readURL(this, '#p1');
+        });
+        $("#input2").change(function () {
+            readURL(this, '#p2');
+        });
+        $("#input3").change(function () {
+            readURL(this, '#p3');
+        });
+        $("#input4").change(function () {
+            readURL(this, '#p4');
+        });
+        $("#input5").change(function () {
+            readURL(this, '#p5');
+        });
+        var user = document.querySelector("#username").innerHTML;
+        var flag = document.querySelector("#flag").innerHTML;
+        socket.emit('login', user);
+
+        socket.on('notif', (notif, user, user2) => {
+            if (flag == 'true') {
+                $("#here").append(
+                '<div class="alert alert-dismissible alert-primary" style="font-size: 15px;" role="alert">' + notif +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button></div >');
+            }
+        });
+</script>

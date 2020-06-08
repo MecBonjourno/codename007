@@ -1,0 +1,61 @@
+<%- include('./includes/header') %>
+<% function calcRating(x) { %>
+    <% return (1 / (1 + Math.exp(-(0.01 * x))) * 100); %>
+<% } %>
+<div id="here"></div>
+<div class="row mt-5">
+    <div class="col-md-6 m-auto">
+        <div class="card card-body jumbotron" style="text-align: center;">
+            <h1 class="text-center mb-5">
+                Notifications
+            </h1>
+            <% if(typeof user.notif[0] != 'undefined') { %> 
+                <button onclick="markRead()"" type="submit" class="btn btn-primary" style="margin-bottom: 20px;">Mark all notifications as read</button>
+            <% } else { %>
+                <p id="no-new">No new notifications!</p>
+            <% } %>
+            <ul id="messages">
+            <% var rev = user.notif.reverse(); %>
+            <% rev.forEach(notif => { %>
+                <li class="msg" tabindex="-1">
+                    <div class="notif"><%= notif %></div>
+                </li>
+                <div style="clear: both" />
+            <% }); %>
+            </ul>
+        </div>
+    </div>
+    <p id="username" style="visibility: hidden"><%= user.username %></p>
+</div>
+<script>
+    function getRandomColor() {
+        return "hsl(" + 360 * Math.random() + ',' +
+            (25 + 70 * Math.random()) + '%,' +
+            (85 + 10 * Math.random()) + '%)'
+    }
+
+    var user = document.querySelector("#username").innerHTML;
+    socket.emit('login', user);
+
+    function markRead() {
+            $("#messages").empty();
+            socket.emit('markRead', user);
+        }
+
+    var notifs = document.getElementsByClassName("notif");
+    for (var i = 0, len = notifs.length; i < len; i++) {
+       notifs[i].style.backgroundColor = getRandomColor();
+    }
+
+
+    socket.on('notif', (notif, user, user2) => {
+            if (document.querySelector('#' + user) == null) {
+                $("#no-new").remove();
+                $("#messages").prepend(
+                '<li class="msg" tabindex="-1">' +
+                '<div class="notif"  style="background-color: ' + getRandomColor() + '">' + notif + '</div>' +
+                '</li>' +
+                '<div style="clear: both" />');
+            }
+        });
+</script>

@@ -1,0 +1,19 @@
+<div class="row mt-5">
+    <div class="col-md-6 m-auto">
+        <div class="card card-body jumbotron">
+            <h1 class="text-center mb-3">Send Email</h1>
+            <%- include('./partials/messages') %>
+            <form action="/users/newpwd" method="POST">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter Email" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Send</button>
+                <p class="lead mt-4">Send an email to your email address to reset your password!</p>
+            </form>
+            <p class="lead mt-4">
+                <a href="/users/login">Login</a>
+            </p>
+        </div>
+    </div>
+</div>
