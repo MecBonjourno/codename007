@@ -45,13 +45,13 @@ const UserSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-        enum: ["male", "female"],
+        enum: ["Masculino", "Feminino", "Não-Binário", "Prefiro não responder"],
         default: "male"
     },
     orientation: {
         type: String,
-        enum: ["heterosexual", "bisexual", "homosexual"],
-        default: "bisexual"
+        enum: ["Ganhar Força", "Emagrecer", "Focar na Saúde"],
+        default: "Ganhar Força"
     },
     bio: {
         type: String,

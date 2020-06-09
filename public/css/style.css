@@ -1,5 +1,5 @@
 * {
-    font-family: "Helvetica Neue";
+    font-family: "Poppins";
 }
 
 .footer {
@@ -22,7 +22,7 @@
     margin-top: 20px;
     margin-bottom: 20px;
     border-radius: 15px;
-    border: 2px solid #EB6864;
+    border: 2px solid #c41d17;
 }
 
 .row {
@@ -87,7 +87,7 @@
 
 .arrow-left, .arrow-right {
     margin-top: 5px;
-    color: #EB6864;
+    color: #c41d17;
 }
 
 .arrow-right {
@@ -101,7 +101,7 @@
 .index-page {
     display: inline-block;
     font-size: 20px;
-    color: #EB6864;
+    color: #c41d17;
 }
 
 .container-page {
@@ -174,7 +174,7 @@ input[type="file"] {
   left: 20px;
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
-  color: #EB6864;
+  color: #c41d17;
   font-size: 25px;
   border: none;
   cursor: pointer;
@@ -187,7 +187,7 @@ input[type="file"] {
   right: -2px;
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
-  color: #EB6864;
+  color: #c41d17;
   font-size: 25px;
   border: none;
   cursor: pointer;
@@ -206,7 +206,7 @@ input[type="file"] {
 
 .remove { 
     position: absolute;
-    background-color: #EB6864;
+    background-color: #c41d17;
     border: none;
     color: white;
     padding: 5px 10px;
@@ -246,7 +246,7 @@ input[type="file"] {
   width: 12px;
   height: 12px;
   border-radius: 50%; 
-  background: #EB6864;
+  background: #c41d17;
   cursor: pointer;
 }
 
@@ -254,7 +254,7 @@ input[type="file"] {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #EB6864;
+  background: #c41d17;
   cursor: pointer;
 }
 
@@ -270,7 +270,7 @@ input[type="file"] {
 .dislike {
     position: absolute;
     font-size: 45px;
-    color: #EB6864;
+    color: #c41d17;
     top: -6px;
     left: 138px;
 }
@@ -278,7 +278,7 @@ input[type="file"] {
 .like {
     position: absolute;
     font-size: 40px;
-    color: #EB6864;
+    color: #c41d17;
     top: 0px;
     left: 0px;
 }
@@ -311,7 +311,7 @@ input[type="file"] {
 }
 
 .toggler {
-    color: #EB6864;
+    color: #c41d17;
 }
 
 div.responsive:hover {

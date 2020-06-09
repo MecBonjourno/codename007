@@ -16,9 +16,9 @@ const config = {
 
 function sendEmail(username, key, email, type) {
     if (type == "registration") {
-        var text = '<h1>Welcome to Matcha!</h1>' + '<p>Please click the following link to activate your account: </p>' + '<a href="https://codename007.herokuapp.com/users/activate?username=' + username + '&key=' + key + '">ACTIVATE</a>';
+        var text = '<h1>Bem vindo ao 007!</h1>' + '<p>Clique no link abaixo para ativar sua conta: </p>' + '<a href="https://codename007.herokuapp.com/users/activate?username=' + username + '&key=' + key + '">ATIVAR</a>';
     } else {
-        var text = '<h1>Reset your Matcha password!</h1>' + '<p>Please click the following link to reset your password: </p>' + '<a href="https://codename007.herokuapp.com/users/reset?username=' + username + '&key=' + key + '">RESET</a>';
+        var text = '<h1>Redfina sua senha do 007!</h1>' + '<p>Clique no link abaixo para redefinir sua senha: </p>' + '<a href="https://codename007.herokuapp.com/users/reset?username=' + username + '&key=' + key + '">REDEFINIR</a>';
     }
         var flag = 1;
 
@@ -34,7 +34,7 @@ function sendEmail(username, key, email, type) {
     mailOptions = {
         from: '"CodeName 007 - Master Splinter" <Codename007@gmail.com>',
         to: email,
-        subject: 'Activate your 007 account!',
+        subject: 'Ative sua conta 007!',
         text: text,
         html: '<p>' + text + '</p>'
     };
@@ -68,15 +68,15 @@ router.post('/register', (req, res) => {
     let errors = [];
 
     if (!fname || !lname || !username || !email || !password || !password2) {
-        errors.push({ msg: 'Please enter all fields' });
+        errors.push({ msg: 'Preencha todos os campos!' });
     }
 
     if (password != password2) {
-        errors.push({ msg: 'Passwords do not match' });
+        errors.push({ msg: 'Senhas não sào identicas' });
     }
 
     if (password.length < 6) {
-        errors.push({ msg: 'Password must be at least 6 characters' });
+        errors.push({ msg: 'Senha precisa ter no mínimo 6 caracteres.' });
     }
 
     if (errors.length > 0) {
@@ -93,7 +93,7 @@ router.post('/register', (req, res) => {
     } else {
         User.findOne({ username: username }).then(user => {
             if (user) {
-                errors.push({ msg: 'That username is already in use!' });
+                errors.push({ msg: 'Este nome de usuário já esta cadastrado!' });
                 res.render('register', {
                     errors,
                     fname,
@@ -106,7 +106,7 @@ router.post('/register', (req, res) => {
             } else {
                 User.findOne({ email: email }).then(user => {
                     if (user) {
-                        errors.push({ msg: 'Email address is already in use!' });
+                        errors.push({ msg: 'Este email já esta cadastrado!' });
                         res.render('register', {
                             errors,
                             fname,
@@ -138,13 +138,13 @@ router.post('/register', (req, res) => {
                                         .then(user => {
                                             req.flash(
                                                 'success_msg',
-                                                'You are now registered! Please click the link in the email we sent you to activate your account!'
+                                                'Voce agora está registrado! Ative sua conta pelo email que irá receber.'
                                             );
                                             res.redirect('/users/login');
                                         })
                                         .catch(err => console.log(err));
                                 } else {
-                                    errors.push({ msg: 'Something went wrong, please try again later...' });
+                                    errors.push({ msg: 'Algo deu errado, por favor tente novamente...' });
                                     res.render('register', {
                                         errors,
                                         fname,
@@ -178,7 +178,7 @@ router.get('/check', (req, res) => {
             if (user[0].activated == 0) {
                 req.flash(
                     'error_msg',
-                    'Please activate your account before logging in!'
+                    'Por favor ative sua conta antes de fazer login!'
                 );
                 res.redirect('/users/login');
             }
@@ -206,7 +206,7 @@ router.get('/logout', (req, res) => {
     User.updateOne({ username: req.user.username }, { $set: { online: false, lastOnline: Date.now()}}).then(() => {
         let user = req.user.username;
         req.logout();
-        req.flash('success_msg', 'You are now logged out!');
+        req.flash('success_msg', 'Log Out com sucesso!');
         res.redirect('/users/login?logged_out=' + user);
     })
 });
@@ -221,7 +221,7 @@ router.get('/activate', (req, res) => {
             if (user[0].activated == 1) {
                 req.flash(
                     'error_msg',
-                    'Your account has already been activated! Please log in'
+                    'Sua conta foi ativada! Prossiga com o Login'
                 );
                 res.redirect('/users/login');
             }
@@ -229,7 +229,7 @@ router.get('/activate', (req, res) => {
                 User.updateOne({ username: usernameLink }, { $set: { activated: 1 }}).then(() => {
                     req.flash(
                         'success_msg',
-                        'Your account has been activated! Please log in'
+                        'Sua conta foi ativada! Prossiga com o Login'
                     );
                     res.redirect('/users/login');
                 })
@@ -237,14 +237,14 @@ router.get('/activate', (req, res) => {
             } else {
                 req.flash(
                     'error_msg',
-                    'Something went wrong... Please click the link you received by email!'
+                    'Algo deu errado... Por favor use o link recebido no seu email!'
                 );
                 res.redirect('/users/login');
             } 
         } else {
             req.flash(
                 'error_msg',
-                'No user found with that username...'
+                'No foi encontrado um usuário com esse nome...'
             );
             res.redirect('/users/login');
         }
@@ -264,7 +264,7 @@ router.post('/newpwd', (req, res) => {
                 if (sendEmail(user.username, key, email, "newpwd")) {
                     req.flash(
                         'success_msg',
-                        'Email sent!'
+                        'Email enviado!'
                     );
                     res.redirect('login');
                 }
@@ -272,7 +272,7 @@ router.post('/newpwd', (req, res) => {
         } else {
             req.flash(
                 'error_msg',
-                'No user found with that email-address...'
+                'Não foi encontrado usuário com este email...'
             );
             res.render('newpwd');
         }
@@ -292,14 +292,14 @@ router.get('/reset', (req, res) => {
                 } else {
                     req.flash(
                         'error_msg',
-                        'Something went wrong... Please click the link in the email you received to reset your password!'
+                        'Algo deu errado... Por favor clique no link recebido no seu email para redefinir sua senha!'
                     );
                     res.redirect('newpwd');
                 }
             } else {
                 req.flash(
                     'error_msg',
-                    'Something went wrong... Please click the link in the email you received to reset your password!'
+                    'Algo deu errado... Por favor clique no link recebido no seu email para redefinir sua senha!'
                 );
                 res.redirect('newpwd');
             }
@@ -316,13 +316,13 @@ router.post('/reset', (req, res) => {
     let errors = [];
 
     if (pwd != pwd2) {
-        errors.push({ msg: "Passwords don't match!" });
+        errors.push({ msg: "Senhas não são identicas!" });
     }
     if (!pwd || !pwd2) {
-        errors.push({ msg: 'Please enter all fields' });
+        errors.push({ msg: 'Por favor preencha todos os campos!' });
     }
     if (pwd.length < 6) {
-        errors.push({ msg: 'Password must be at least 6 characters' });
+        errors.push({ msg: 'Senhas precisam ter no mínimo 6 caracteres' });
     }
 
     if (errors.length > 0) {
@@ -337,7 +337,7 @@ router.post('/reset', (req, res) => {
                 User.updateOne({ username: username }, { $set: { password: hash }}).then(() => {
                     req.flash(
                         'success_msg',
-                        'Your password has been updated!'
+                        'Sua senha foi redefinida!'
                     );
                     if (typeof req.user == 'undefined') {
                         res.redirect('login');
